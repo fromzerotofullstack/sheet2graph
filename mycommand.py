@@ -23,6 +23,10 @@ if __name__ == '__main__':
         '--output-format', '-ofo', nargs='?', dest='output_format', default='png',
         help="[png|jpg|svg]: default is png"
     )
+    parser.add_argument(
+        '--size', '-s', nargs='?', dest='size', default='700x500',
+        help="size: widthxheight. Default '700x500'"
+    )
     args = parser.parse_args()
 
     input_file = args.input_file[0]
@@ -41,6 +45,10 @@ if __name__ == '__main__':
         output_format = args.output_format
         output_path = "{folder}/output.{ext}".format(folder=output_folder, ext=output_format)
 
+    tmp = args.size.split('x')
+    width, height = tmp[0], tmp[1]
+
+
     df = pd.read_csv(input_file, header=None)
     df.dropna(how='all', inplace=True)
     df = df.iloc[2:]
@@ -54,4 +62,4 @@ if __name__ == '__main__':
     else:
         raise Exception("graph type not supported")
 
-    plotly.io.write_image(fig, output_path, format=output_format)
+    plotly.io.write_image(fig, output_path, format=output_format, width=width, height=height)
