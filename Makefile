@@ -17,7 +17,8 @@ run:
 	#env3.8/bin/python3.8 mycommand.py sales_data.csv --output-format "svg"
 	#env3.8/bin/python3.8 mycommand.py sales_data.csv --output-format "jpg"
 	#env3.8/bin/python3.8 mycommand.py sales_data.csv --output-format "svg" --output-filename "output2/line.jpg"
-	env3.8/bin/python3.8 mycommand.py sales_data.csv --output-filename "output/line.jpg" --size "1400x1000"
+	#env3.8/bin/python3.8 mycommand.py sales_data.csv --output-filename "output/line.jpg" --size "1400x1000" -gt "linee"
+	env3.8/bin/python3.8 mycommand.py sales_data.csv --output-filename "output/line.jpg" --size "1400x1000" -gt "scatter"
 
 
 freeze_requirements:

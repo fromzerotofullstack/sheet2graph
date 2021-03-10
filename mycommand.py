@@ -1,12 +1,38 @@
+from typing import Any
+
 import pandas as pd
 import plotly
 import plotly.express as px
 import pathlib
 import argparse
+from typeguard import typechecked
 
 
-def main(input_file='', output_filename=None, output_format='', output_folder='', output_size='700x500', graph_type='bar'):
+@typechecked
+def select_data(df: pd.DataFrame) -> pd.DataFrame:
+    df.dropna(how='all', inplace=True)
+    df = df.iloc[2:].copy()
+    df.columns = ['Salesman', 'Week1', 'Week2', 'Week3', 'Week4']
+    df['Week1'] = df['Week1'].astype(int)
+    return df
 
+
+@typechecked
+def plot(df: pd.DataFrame, graph_type: str = 'bar') -> Any:
+    if graph_type == 'bar':
+        fig = px.bar(df, x='Salesman', y='Week1')
+    elif graph_type == 'line':
+        fig = px.line(df, x='Salesman', y='Week1')
+    elif graph_type == 'scatter':
+        fig = px.scatter(df, x='Salesman', y='Week1')
+    else:
+        print("graph type not supported")
+        exit()
+    return fig
+
+
+def main(input_file='', output_filename=None, output_format='', output_folder='', output_size='700x500',
+         graph_type='bar'):
     if output_filename:
         p = pathlib.Path(output_filename)
         output_folder = str(p.parent)
@@ -22,17 +48,8 @@ def main(input_file='', output_filename=None, output_format='', output_folder=''
     width, height = tmp[0], tmp[1]
 
     df = pd.read_csv(input_file, header=None)
-    df.dropna(how='all', inplace=True)
-    df = df.iloc[2:]
-    df.columns = ['Salesman', 'Week1', 'Week2', 'Week3', 'Week4']
-    df['Week1'] = df['Week1'].astype(int)
-
-    if graph_type == 'bar':
-        fig = px.bar(df, x='Salesman', y='Week1')
-    elif graph_type == 'line':
-        fig = px.line(df, x='Salesman', y='Week1')
-    else:
-        raise Exception("graph type not supported")
+    df = select_data(df)
+    fig = plot(df, graph_type=graph_type)
 
     plotly.io.write_image(fig, output_path, format=output_format, width=width, height=height)
 
@@ -44,7 +61,7 @@ if __name__ == '__main__':
     """)
     parser.add_argument('input_file', nargs='+', help='input file (csv,xls)')
     parser.add_argument('--graph-type', '-gt', nargs='?', dest='graph_type', default="bar",
-                        help='[bar|line]: default is bar')
+                        help='[bar|line|scatter]: default is bar')
     parser.add_argument(
         '--output-folder', '-of', nargs='?', dest='output_folder', default="output",
         help="output_folder (ending without slash): default is 'output'. Can be serveral folders. ex. 'sales/graphs'"
