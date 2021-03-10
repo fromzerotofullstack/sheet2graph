@@ -13,7 +13,10 @@ run:
 	#env3.8/bin/python3.8 mycommand.py sales_data.csv --graph-type "line"
 	#env3.8/bin/python3.8 mycommand.py sales_data.csv --graph-type "line" --output-folder "sales/graphs"
 	#env3.8/bin/python3.8 mycommand.py sales_data.csv --graph-type "line" --output-filename "output2/line.png"
-	env3.8/bin/python3.8 mycommand.py sales_data.csv -gt "bar" -ofi "output2/bar2.png"
+	#env3.8/bin/python3.8 mycommand.py sales_data.csv -gt "bar" -ofi "output2/bar2.png"
+	#env3.8/bin/python3.8 mycommand.py sales_data.csv --output-format "svg"
+	env3.8/bin/python3.8 mycommand.py sales_data.csv --output-format "jpg"
+	#env3.8/bin/python3.8 mycommand.py sales_data.csv --output-format "svg" --output-filename "output2/line.jpg"
 
 
 freeze_requirements:

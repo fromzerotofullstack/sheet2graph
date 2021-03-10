@@ -17,7 +17,11 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--output-filename', '-ofi', nargs='?', dest='output_filename', default=None,
-        help="output_filename: default is 'output/output.png'. Overrides --output-folder if present"
+        help="output_filename: default is 'output/output.png'. Overrides --output-folder,--output-format if present"
+    )
+    parser.add_argument(
+        '--output-format', '-ofo', nargs='?', dest='output_format', default='png',
+        help="[png|jpg|svg]: default is png"
     )
     args = parser.parse_args()
 
@@ -29,10 +33,13 @@ if __name__ == '__main__':
         output_folder = str(p.parent)
         pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
         output_path = "{folder}/{f}".format(folder=output_folder, f=p.name)
+        # TODO: fix for filename
+        output_format = args.output_format
     else:
         output_folder = args.output_folder
         pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
-        output_path = "{folder}/output.png".format(folder=output_folder)
+        output_format = args.output_format
+        output_path = "{folder}/output.{ext}".format(folder=output_folder, ext=output_format)
 
     df = pd.read_csv(input_file, header=None)
     df.dropna(how='all', inplace=True)
@@ -47,4 +54,4 @@ if __name__ == '__main__':
     else:
         raise Exception("graph type not supported")
 
-    plotly.io.write_image(fig, output_path)
+    plotly.io.write_image(fig, output_path, format=output_format)
