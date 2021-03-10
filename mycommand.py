@@ -33,8 +33,8 @@ if __name__ == '__main__':
         output_folder = str(p.parent)
         pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
         output_path = "{folder}/{f}".format(folder=output_folder, f=p.name)
-        # TODO: fix for filename
-        output_format = args.output_format
+        # .png, .svg, etc.
+        output_format = p.suffix[1:]
     else:
         output_folder = args.output_folder
         pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
