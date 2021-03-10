@@ -2,3 +2,11 @@
 env3.8
 output
 *.png
+*.jpg
+*.svg
+*.xls
+*.xlsx
+*.xlsm
+*.xlsb
+*.odf
+*.odt

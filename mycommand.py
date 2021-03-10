@@ -47,7 +47,18 @@ def main(input_file='', output_filename=None, output_format='', output_folder=''
     tmp = output_size.split('x')
     width, height = tmp[0], tmp[1]
 
-    df = pd.read_csv(input_file, header=None)
+    # csv, xlsx
+    accepted_excel_formats = ['xls', 'xlsx', 'xlsm', 'xlsb', 'odf', 'ods', 'odt']
+    input_ext = pathlib.Path(input_file).suffix[1:]
+    if input_ext == 'csv':
+        df = pd.read_csv(input_file, header=None)
+    elif input_ext in accepted_excel_formats:
+        df = pd.read_excel(input_file, header=None)
+    else:
+        print("Spreadhseet file format not supported. Please use one fo the supported formats ({extensions})".format(
+        extensions=",".join(accepted_excel_formats)))
+        exit()
+
     df = select_data(df)
     fig = plot(df, graph_type=graph_type)
 
@@ -57,9 +68,10 @@ def main(input_file='', output_filename=None, output_format='', output_folder=''
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="""
     Graph spreadsheet data easily
-    Takes a spreadsheet file (csv, xls) as input and outputs an image file (bitmap, vector) with gaphs of the data contained in the file
+    Takes a spreadsheet file as input and outputs an image file (bitmap, vector) with gaphs of the data contained in the file.
+    Accept input files are xls, xlsx, xlsm, xlsb, odf, ods and odt file extensions
     """)
-    parser.add_argument('input_file', nargs='+', help='input file (csv,xls)')
+    parser.add_argument('input_file', nargs='+', help='input file (csv,xls, xlsx)')
     parser.add_argument('--graph-type', '-gt', nargs='?', dest='graph_type', default="bar",
                         help='[bar|line|scatter]: default is bar')
     parser.add_argument(
