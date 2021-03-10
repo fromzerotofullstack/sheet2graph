@@ -44,20 +44,32 @@ def main(input_file='', output_filename=None, output_format='', output_folder=''
         pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
         output_path = "{folder}/output.{ext}".format(folder=output_folder, ext=output_format)
 
+    if 'x' not in output_size:
+        print("Wrong size format. It needs to be $WIDTHx$HEIGHT format. For example '700x500'")
+        exit()
+
     tmp = output_size.split('x')
     width, height = tmp[0], tmp[1]
+
+    is_google_docs = input_file.startswith('http') and 'drive.google.com' in input_file
+    if is_google_docs:
+        doc_id = input_file.split('/')[-2]
+        input_file = 'https://drive.google.com/uc?export=download&id={doc_id}'.format(
+            doc_id=doc_id
+        )
 
     # csv, xlsx
     accepted_excel_formats = ['xls', 'xlsx', 'xlsm', 'xlsb', 'odf', 'ods', 'odt']
     input_ext = pathlib.Path(input_file).suffix[1:]
     if input_ext == 'csv':
         df = pd.read_csv(input_file, header=None)
-    elif input_ext in accepted_excel_formats:
-        df = pd.read_excel(input_file, header=None)
     else:
-        print("Spreadhseet file format not supported. Please use one fo the supported formats ({extensions})".format(
-        extensions=",".join(accepted_excel_formats)))
-        exit()
+        try:
+            df = pd.read_excel(input_file, header=None)
+        except Exception as e:
+            print("error opening file {f}".format(f=input))
+            print(e)
+            exit()
 
     df = select_data(df)
     fig = plot(df, graph_type=graph_type)
