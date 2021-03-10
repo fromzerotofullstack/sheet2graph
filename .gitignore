@@ -1,3 +1,4 @@
 .idea
 env3.8
-output.png
+output
+*.png
