@@ -102,14 +102,25 @@ if __name__ == '__main__':
         '--size', '-s', nargs='?', dest='size', default='700x500',
         help="size: widthxheight. Default '700x500'"
     )
+    parser.add_argument(
+        '--run-tests', nargs='?', dest='run_tests', default=False, const=True,
+        help="Runs all the tests (might take a while). Overloads any other option"
+    )
     args = parser.parse_args()
 
-    input_file = args.input_file[0]
-    main(
-        input_file=input_file,
-        output_filename=args.output_filename,
-        output_format=args.output_format,
-        output_folder=args.output_folder,
-        output_size=args.size,
-        graph_type=args.graph_type,
-    )
+    if args.run_tests:
+        import unittest
+        from tests import TestCommandLine
+
+        suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestCommandLine)
+        unittest.TextTestRunner().run(suite)
+    else:
+        input_file = args.input_file[0]
+        main(
+            input_file=input_file,
+            output_filename=args.output_filename,
+            output_format=args.output_format,
+            output_folder=args.output_folder,
+            output_size=args.size,
+            graph_type=args.graph_type,
+        )

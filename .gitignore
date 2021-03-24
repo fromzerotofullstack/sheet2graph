@@ -10,3 +10,5 @@ output
 *.xlsb
 *.odf
 *.odt
+__pycache__
+

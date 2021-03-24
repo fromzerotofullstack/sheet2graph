@@ -19,6 +19,10 @@ help:
 	#env3.8/bin/python3.8 mycommand.py sales_data.csv --output-filename "output/line.jpg" --size "1400x1000" -gt "linee"
 	#env3.8/bin/python3.8 mycommand.py sales_data.csv --output-filename "output/line.jpg" --size "1400x1000" -gt "scatter"
 
+test:
+	#env3.8/bin/python3.8 tests.py
+	env3.8/bin/python3.8 mycommand.py "" --run-tests
+
 run:
 	env3.8/bin/python3.8 mycommand.py "https://drive.google.com/file/d/1y1MzCLpFioVAHnGNZDKG5L4O62PtCqZX/view?usp=sharing" --output-filename "output/line.jpg" --size "1400x1000" -gt "scatter"
 
