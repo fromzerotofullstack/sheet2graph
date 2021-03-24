@@ -1,3 +1,4 @@
+import sys
 from typing import Any
 
 import pandas as pd
@@ -31,8 +32,15 @@ def plot(df: pd.DataFrame, graph_type: str = 'bar') -> Any:
     return fig
 
 
-def main(input_file='', output_filename=None, output_format='', output_folder='', output_size='700x500',
-         graph_type='bar'):
+def main(num_args:int, input_file=None, output_filename=None, output_format='', output_folder='', output_size='700x500',
+         graph_type='bar', print_version=False, version: str = '0.0'):
+
+    # no arguments prints version and help
+    if num_args == 0 or print_version:
+        print("mycommand {v}".format(v=version))
+        print("    run 'mycommand --help' for all the options")
+        return
+
     if output_filename:
         p = pathlib.Path(output_filename)
         output_folder = str(p.parent)
@@ -51,24 +59,26 @@ def main(input_file='', output_filename=None, output_format='', output_folder=''
     tmp = output_size.split('x')
     width, height = tmp[0], tmp[1]
 
-    is_google_docs = input_file.startswith('http') and 'drive.google.com' in input_file
-    if is_google_docs:
-        doc_id = input_file.split('/')[-2]
-        input_file = 'https://drive.google.com/uc?export=download&id={doc_id}'.format(
-            doc_id=doc_id
-        )
+    df = pd.DataFrame()
+    if input_file:
+        is_google_docs = input_file.startswith('http') and 'drive.google.com' in input_file
+        if is_google_docs:
+            doc_id = input_file.split('/')[-2]
+            input_file = 'https://drive.google.com/uc?export=download&id={doc_id}'.format(
+                doc_id=doc_id
+            )
 
-    # csv, xlsx
-    input_ext = pathlib.Path(input_file).suffix[1:]
-    if input_ext == 'csv':
-        df = pd.read_csv(input_file, header=None)
-    else:
-        try:
-            df = pd.read_excel(input_file, header=None)
-        except Exception as e:
-            print("error opening file {f}".format(f=input))
-            print(e)
-            exit()
+        # csv, xlsx
+        input_ext = pathlib.Path(input_file).suffix[1:]
+        if input_ext == 'csv':
+            df = pd.read_csv(input_file, header=None)
+        else:
+            try:
+                df = pd.read_excel(input_file, header=None)
+            except Exception as e:
+                print("error opening file {f}".format(f=input))
+                print(e)
+                exit()
 
     df = select_data(df)
     fig = plot(df, graph_type=graph_type)
@@ -82,7 +92,7 @@ if __name__ == '__main__':
     Takes a spreadsheet file as input and outputs an image file (bitmap, vector) with graphs of the data contained in the file.
     Accepted input files are csv and xlsx file extensions
     """)
-    parser.add_argument('input_file', nargs='+', help='input file (csv, xlsx)')
+    parser.add_argument('input_file', nargs='?', default=None, help='input file (csv, xlsx)')
     parser.add_argument('--graph-type', '-gt', nargs='?', dest='graph_type', default="bar",
                         help='[bar|line|scatter]: default is bar')
     parser.add_argument(
@@ -105,6 +115,10 @@ if __name__ == '__main__':
         '--run-tests', nargs='?', dest='run_tests', default=False, const=True,
         help="Runs all the tests (might take a while). Overloads any other option"
     )
+    parser.add_argument(
+        '--version', '-v', nargs='?', dest='print_version', default=False, const=True,
+        help="Show version information"
+    )
     args = parser.parse_args()
 
     if args.run_tests:
@@ -114,12 +128,16 @@ if __name__ == '__main__':
         suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestCommandLine)
         unittest.TextTestRunner().run(suite)
     else:
-        input_file = args.input_file[0]
+        # includes name of the script
+        num_args = len((sys.argv)) - 1
         main(
-            input_file=input_file,
+            num_args=num_args,
+            input_file=args.input_file,
             output_filename=args.output_filename,
             output_format=args.output_format,
             output_folder=args.output_folder,
             output_size=args.size,
             graph_type=args.graph_type,
+            print_version=args.print_version,
+            version='0.1',
         )

@@ -5,6 +5,7 @@ import unittest
 import os
 from os.path import isdir, isfile
 from PIL import Image
+import subprocess
 
 
 class TestCommandLine(unittest.TestCase):
@@ -36,11 +37,33 @@ class TestCommandLine(unittest.TestCase):
         cmd = 'env3.8/bin/python3.8 mycommand.py {params}'.format(params=params)
         os.system(cmd)
 
+    @staticmethod
+    def run_cmd_with_output(params=''):
+        """
+        helper to run our command
+        """
+        cmd = 'env3.8/bin/python3.8 mycommand.py {params}'.format(params=params)
+        output = subprocess.check_output(cmd, shell=True)
+        return output
+
     def setUp(self):
         pathlib.Path(self.folder_output).mkdir(parents=True, exist_ok=True)
 
     def tearDown(self):
         shutil.rmtree(self.folder_output)
+
+    """
+    Defaults
+    """
+    def test_default(self):
+        out = self.run_cmd_with_output('')
+        self.assertTrue(b'mycommand 0.1' in out)
+        self.assertTrue(b'--help' in out)
+
+    def test_version(self):
+        out = self.run_cmd_with_output('--version')
+        self.assertTrue(b'mycommand 0.1' in out)
+        self.assertTrue(b'--help' in out)
 
     """
     Output
