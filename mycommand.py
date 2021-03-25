@@ -41,23 +41,28 @@ def main(num_args:int, input_file=None, output_filename=None, output_format='', 
         print("    run 'mycommand --help' for all the options")
         return
 
-    if output_filename:
-        p = pathlib.Path(output_filename)
-        output_folder = str(p.parent)
-        pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
-        output_path = "{folder}/{f}".format(folder=output_folder, f=p.name)
-        # .png, .svg, etc.
-        output_format = p.suffix[1:]
-    else:
-        pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
-        output_path = "{folder}/output.{ext}".format(folder=output_folder, ext=output_format)
+    # when we pass only input file we print data
+    if num_args == 1 and input_file:
+        print_only = True
 
-    if 'x' not in output_size:
-        print("Wrong size format. It needs to be $WIDTHx$HEIGHT format. For example '700x500'")
-        exit()
+    if not print_only:
+        if output_filename:
+            p = pathlib.Path(output_filename)
+            output_folder = str(p.parent)
+            pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
+            output_path = "{folder}/{f}".format(folder=output_folder, f=p.name)
+            # .png, .svg, etc.
+            output_format = p.suffix[1:]
+        else:
+            pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
+            output_path = "{folder}/output.{ext}".format(folder=output_folder, ext=output_format)
 
-    tmp = output_size.split('x')
-    width, height = tmp[0], tmp[1]
+        if 'x' not in output_size:
+            print("Wrong size format. It needs to be $WIDTHx$HEIGHT format. For example '700x500'")
+            exit()
+
+        tmp = output_size.split('x')
+        width, height = tmp[0], tmp[1]
 
     df = pd.DataFrame()
     if input_file:

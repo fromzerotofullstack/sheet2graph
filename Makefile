@@ -14,7 +14,8 @@ test:
 run:
 	#env3.8/bin/python3.8 mycommand.py --version
 	#env3.8/bin/python3.8 mycommand.py
-	env3.8/bin/python3.8 mycommand.py sales_data.csv --print-only
+	#env3.8/bin/python3.8 mycommand.py sales_data.csv --print-only
+	env3.8/bin/python3.8 mycommand.py sales_data.csv
 
 
 freeze_requirements:
