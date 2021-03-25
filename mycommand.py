@@ -33,7 +33,7 @@ def plot(df: pd.DataFrame, graph_type: str = 'bar') -> Any:
 
 
 def main(num_args:int, input_file=None, output_filename=None, output_format='', output_folder='', output_size='700x500',
-         graph_type='bar', print_version=False, version: str = '0.0'):
+         graph_type='bar', print_version=False, version: str = '0.0', print_only=False):
 
     # no arguments prints version and help
     if num_args == 0 or print_version:
@@ -80,6 +80,10 @@ def main(num_args:int, input_file=None, output_filename=None, output_format='', 
                 print(e)
                 exit()
 
+    if print_only:
+        print(df)
+        return
+
     df = select_data(df)
     fig = plot(df, graph_type=graph_type)
 
@@ -112,6 +116,10 @@ if __name__ == '__main__':
         help="size: widthxheight. Default '700x500'"
     )
     parser.add_argument(
+        '--print-only', '-p', nargs='?', dest='print_only', default=False, const=True,
+        help="Prints the selected data, without generating any file output"
+    )
+    parser.add_argument(
         '--run-tests', nargs='?', dest='run_tests', default=False, const=True,
         help="Runs all the tests (might take a while). Overloads any other option"
     )
@@ -139,5 +147,6 @@ if __name__ == '__main__':
             output_size=args.size,
             graph_type=args.graph_type,
             print_version=args.print_version,
+            print_only=args.print_only,
             version='0.1',
         )
