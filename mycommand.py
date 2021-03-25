@@ -57,7 +57,6 @@ def select_data(df: pd.DataFrame, x=Optional[str], y=Optional[str]) -> pd.DataFr
                 # xlsx can be number instead of string
                 vals.append(str(cell_val))
 
-
         return vals
 
     df.dropna(how='all', inplace=True)
@@ -120,20 +119,35 @@ def select_data(df: pd.DataFrame, x=Optional[str], y=Optional[str]) -> pd.DataFr
 
 
 @typechecked
-def plot(df: pd.DataFrame, graph_type: str = 'bar') -> Any:
+def plot(df: pd.DataFrame, graph_type: str = 'bar', xlabel='x', ylabel='y') -> Any:
+    if not xlabel:
+        xlabel = 'x'
+    if not ylabel:
+        ylabel = 'y'
+
     if graph_type == 'bar':
-        fig = px.bar(df, x='x', y='y')
+        fig = px.bar(df, x='x', y='y', labels={
+            "x": xlabel,
+            "y": ylabel,
+        })
     elif graph_type == 'line':
-        fig = px.line(df, x='x', y='y')
+        fig = px.line(df, x='x', y='y', labels={
+            "x": xlabel,
+            "y": ylabel,
+        })
     elif graph_type == 'scatter':
-        fig = px.scatter(df, x='x', y='y')
+        fig = px.scatter(df, x='x', y='y', labels={
+            "x": xlabel,
+            "y": ylabel,
+        })
     else:
         print("graph type not supported")
         exit()
     return fig
 
 
-def main(num_args: int, x=None, y=None, input_file=None, output_filename=None, output_format='', output_folder='',
+def main(num_args: int, x=None, y=None, xlabel='x', ylabel='y', input_file=None, output_filename=None, output_format='',
+         output_folder='',
          output_size='700x500',
          graph_type='bar', print_version=False, version: str = '0.0', print_only=False):
     # no arguments prints version and help
@@ -191,7 +205,7 @@ def main(num_args: int, x=None, y=None, input_file=None, output_filename=None, o
         print(df)
         return
 
-    fig = plot(df, graph_type=graph_type)
+    fig = plot(df, graph_type=graph_type, xlabel=xlabel, ylabel=ylabel)
 
     plotly.io.write_image(fig, output_path, format=output_format, width=width, height=height)
 
@@ -207,6 +221,11 @@ if __name__ == '__main__':
                         help="An expression to select the x axis. Ex. '-x A2:A6' or '-x a2,a3,a4,a5'. The range works like in a spreadsheeet, with columns being letters, and row numbers starting at 1. Case-insensitive")
     parser.add_argument('-y', nargs='?', default=None,
                         help="An expression to select the y axis. Ex. '-x b2:b6' or '-x B2,B3,B4,B5'. The range works like in a spreadsheeet, with columns being letters, and row numbers starting at 1. Case-insensitive")
+
+    parser.add_argument('-xlabel', nargs='?', default='x',
+                        help="The label for the x axis. By default 'x'")
+    parser.add_argument('-ylabel', nargs='?', default='y',
+                        help="The label for the y axis. By default 'y'")
 
     parser.add_argument('--graph-type', '-gt', nargs='?', dest='graph_type', default="bar",
                         help='[bar|line|scatter]: default is bar')
@@ -253,6 +272,8 @@ if __name__ == '__main__':
             num_args=num_args,
             x=args.x,
             y=args.y,
+            xlabel=args.xlabel,
+            ylabel=args.ylabel,
             input_file=args.input_file,
             output_filename=args.output_filename,
             output_format=args.output_format,
