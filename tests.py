@@ -77,150 +77,206 @@ class TestCommandLine(unittest.TestCase):
         self.assertTrue(all(el in out for el in [b'A', b'B', b'C', b'D', b'1', b'2', b'3', b'4']))
 
     """
-    Output
+    Selecting data
     """
 
-    def test_output_folder_default(self):
-        cmd = '{input} --output-folder {out}/output/tests'.format(
+    def test_select_data_both_params_or_none_x(self):
+        cmd = '{input} -x "a2:a6" --print-only'.format(
             input=self.csv_file,
-            out=self.folder_output,
+        )
+        out = self.run_cmd_with_output(cmd)
+        self.assertTrue(b'You need to provide both -x and -y flags' in out)
+
+    def test_select_data_both_params_or_none_y(self):
+        cmd = '{input} -y "a2:a6" --print-only'.format(
+            input=self.csv_file,
+        )
+        out = self.run_cmd_with_output(cmd)
+        self.assertTrue(b'You need to provide both -x and -y flags' in out)
+
+    def test_select_data_bad_syntax_x(self):
+        cmd = '{input} -x "a2a6" -y "b2:b6" --print-only'.format(
+            input=self.csv_file,
+        )
+        out = self.run_cmd_with_output(cmd)
+        self.assertTrue(b'Bad syntax for -x parameter' in out)
+
+    def test_select_data_bad_syntax_y(self):
+        cmd = '{input} -x "a2:a6" -y "b2b6" --print-only'.format(
+            input=self.csv_file,
+        )
+        out = self.run_cmd_with_output(cmd)
+        self.assertTrue(b'Bad syntax for -y parameter' in out)
+
+    def test_select_data_range_lowercase(self):
+        cmd = '{input} -x "a2:a6" -y "b2:b6" --print-only'.format(
+            input=self.csv_file,
         )
         self.run_cmd(cmd)
         self.assertTrue(isdir('{out}/output/tests'.format(out=self.folder_output)))
         self.assertTrue(isfile('{out}/output/tests/output.png'.format(out=self.folder_output)))
 
-    def test_filename_default(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
+    def test_select_data_range_uppercase(self):
+        cmd = '{input} -x "A2:A6" -y "B2:B6" --print-only'.format(
             input=self.csv_file,
-            out=self.folder_output,
         )
         self.run_cmd(cmd)
         self.assertTrue(isdir('{out}/output/tests'.format(out=self.folder_output)))
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+        self.assertTrue(isfile('{out}/output/tests/output.png'.format(out=self.folder_output)))
 
-    def test_filename_overrides_output_folder(self):
-        cmd = '{input} --output-folder {out}/tests2 --output-filename {out}/output/tests/out.png'.format(
+    def test_select_data_commas(self):
+        cmd = '{input} -x "a2,a3,a4,a5,a6" -y "b2,b3,b4,b5,b6" --print-only'.format(
             input=self.csv_file,
-            out=self.folder_output,
         )
         self.run_cmd(cmd)
         self.assertTrue(isdir('{out}/output/tests'.format(out=self.folder_output)))
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-        self.assertFalse(isdir('{out}/tests2'.format(out=self.folder_output)))
+        self.assertTrue(isfile('{out}/output/tests/output.png'.format(out=self.folder_output)))
 
-    def test_output_png(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-
-    def test_output_jpg(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.jpg'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.jpg'.format(out=self.folder_output)))
-
-    def test_output_svg(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.svg'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.svg'.format(out=self.folder_output)))
-
-    """
-    Sizes
-    """
-
-    def test_size_default_png(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-        w, h = self.get_image_resolution('{out}/output/tests/out.png'.format(out=self.folder_output))
-        self.assertTrue(w == 700 and h == 500)
-
-    def test_size_png(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.png --size "1400x1000"'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-        w, h = self.get_image_resolution('{out}/output/tests/out.png'.format(out=self.folder_output))
-        self.assertTrue(w == 1400 and h == 1000)
-
-    def test_size_jpg(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.jpg --size "400x300"'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.jpg'.format(out=self.folder_output)))
-        w, h = self.get_image_resolution('{out}/output/tests/out.jpg'.format(out=self.folder_output))
-        self.assertTrue(w == 400 and h == 300)
-
-    """
-    Graph types
-    """
-
-    def test_graph_type_bar(self):
-        cmd = '{input} --graph-type=bar --output-filename {out}/output/tests/out.png'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-
-    def test_graph_type_line(self):
-        cmd = '{input} --graph-type=line --output-filename {out}/output/tests/out.png'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-
-    def test_graph_type_scatter(self):
-        cmd = '{input} --graph-type=scatter --output-filename {out}/output/tests/out.png'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-
-    """
-    Input formats
-    """
-
-    def test_input_csv(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
-            input=self.csv_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-
-    def test_input_xlsx(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
-            input=self.xlsx_file,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-
-    def test_input_google_docs(self):
-        cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
-            input=self.google_docs,
-            out=self.folder_output,
-        )
-        self.run_cmd(cmd)
-        self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    # """
+    # Output
+    # """
+    #
+    # def test_output_folder_default(self):
+    #     cmd = '{input} --output-folder {out}/output/tests'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isdir('{out}/output/tests'.format(out=self.folder_output)))
+    #     self.assertTrue(isfile('{out}/output/tests/output.png'.format(out=self.folder_output)))
+    #
+    # def test_filename_default(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isdir('{out}/output/tests'.format(out=self.folder_output)))
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #
+    # def test_filename_overrides_output_folder(self):
+    #     cmd = '{input} --output-folder {out}/tests2 --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isdir('{out}/output/tests'.format(out=self.folder_output)))
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #     self.assertFalse(isdir('{out}/tests2'.format(out=self.folder_output)))
+    #
+    # def test_output_png(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #
+    # def test_output_jpg(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.jpg'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.jpg'.format(out=self.folder_output)))
+    #
+    # def test_output_svg(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.svg'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.svg'.format(out=self.folder_output)))
+    #
+    # """
+    # Sizes
+    # """
+    #
+    # def test_size_default_png(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #     w, h = self.get_image_resolution('{out}/output/tests/out.png'.format(out=self.folder_output))
+    #     self.assertTrue(w == 700 and h == 500)
+    #
+    # def test_size_png(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.png --size "1400x1000"'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #     w, h = self.get_image_resolution('{out}/output/tests/out.png'.format(out=self.folder_output))
+    #     self.assertTrue(w == 1400 and h == 1000)
+    #
+    # def test_size_jpg(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.jpg --size "400x300"'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.jpg'.format(out=self.folder_output)))
+    #     w, h = self.get_image_resolution('{out}/output/tests/out.jpg'.format(out=self.folder_output))
+    #     self.assertTrue(w == 400 and h == 300)
+    #
+    # """
+    # Graph types
+    # """
+    #
+    # def test_graph_type_bar(self):
+    #     cmd = '{input} --graph-type=bar --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #
+    # def test_graph_type_line(self):
+    #     cmd = '{input} --graph-type=line --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #
+    # def test_graph_type_scatter(self):
+    #     cmd = '{input} --graph-type=scatter --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #
+    # """
+    # Input formats
+    # """
+    #
+    # def test_input_csv(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.csv_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #
+    # def test_input_xlsx(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.xlsx_file,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
+    #
+    # def test_input_google_docs(self):
+    #     cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
+    #         input=self.google_docs,
+    #         out=self.folder_output,
+    #     )
+    #     self.run_cmd(cmd)
+    #     self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
 
 
 if __name__ == '__main__':

@@ -15,7 +15,10 @@ run:
 	#env3.8/bin/python3.8 mycommand.py --version
 	#env3.8/bin/python3.8 mycommand.py
 	#env3.8/bin/python3.8 mycommand.py sales_data.csv --print-only
-	env3.8/bin/python3.8 mycommand.py sales_data.csv
+	#env3.8/bin/python3.8 mycommand.py sales_data.csv
+	env3.8/bin/python3.8 mycommand.py sales_data.csv -x "a2:a6" -y "b2:a6"
+	env3.8/bin/python3.8 mycommand.py sales_data.csv -x "a2:a6" -y "b2:a6" --print-only
+	#env3.8/bin/python3.8 mycommand.py sales_data.csv -x "a2:a6" --print-only
 
 
 freeze_requirements:

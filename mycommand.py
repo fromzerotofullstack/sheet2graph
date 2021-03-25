@@ -1,5 +1,5 @@
 import sys
-from typing import Any
+from typing import Any, Optional
 
 import pandas as pd
 import plotly
@@ -12,8 +12,31 @@ import numpy as np
 
 
 @typechecked
-def select_data(df: pd.DataFrame) -> pd.DataFrame:
+def select_data(df: pd.DataFrame, x=Optional[str], y=Optional[str]) -> pd.DataFrame:
     df.dropna(how='all', inplace=True)
+
+    if (x and not y) or (y and not x):
+        print("""You need to provide both -x and -y flags to select data
+        Examples:
+            -x A2:A6 -y b2:b6
+            -x a2,a3,a4,a5,a6 -y B2,B3,B4,B5,B6
+        """)
+        exit()
+
+    if x and ':' not in x and ',' not in x:
+        print("""Bad syntax for -x parameter
+        Examples:
+            -x A2:A6 -y b2:b6
+            -x a2,a3,a4,a5,a6 -y B2,B3,B4,B5,B6
+        """)
+        exit()
+    if y and ':' not in y and ',' not in y:
+        print("""Bad syntax for -y parameter
+        Examples:
+            -x A2:A6 -y b2:b6
+            -x a2,a3,a4,a5,a6 -y B2,B3,B4,B5,B6
+        """)
+        exit()
 
     """
     index like in excel
@@ -50,7 +73,7 @@ def plot(df: pd.DataFrame, graph_type: str = 'bar') -> Any:
     return fig
 
 
-def main(num_args: int, input_file=None, output_filename=None, output_format='', output_folder='',
+def main(num_args: int, x=None, y=None, input_file=None, output_filename=None, output_format='', output_folder='',
          output_size='700x500',
          graph_type='bar', print_version=False, version: str = '0.0', print_only=False):
     # no arguments prints version and help
@@ -103,7 +126,7 @@ def main(num_args: int, input_file=None, output_filename=None, output_format='',
                 print(e)
                 exit()
 
-    df = select_data(df)
+    df = select_data(df, x=x, y=y)
     if print_only:
         print(df)
         return
@@ -120,6 +143,11 @@ if __name__ == '__main__':
     Accepted input files are csv and xlsx file extensions
     """)
     parser.add_argument('input_file', nargs='?', default=None, help='input file (csv, xlsx)')
+    parser.add_argument('-x', nargs='?', default=None,
+                        help="An expression to select the x axis. Ex. '-x A2:A6' or '-x a2,a3,a4,a5'. The range works like in a spreadsheeet, with columns being letters, and row numbers starting at 1. Case-insensitive")
+    parser.add_argument('-y', nargs='?', default=None,
+                        help="An expression to select the y axis. Ex. '-x b2:b6' or '-x B2,B3,B4,B5'. The range works like in a spreadsheeet, with columns being letters, and row numbers starting at 1. Case-insensitive")
+
     parser.add_argument('--graph-type', '-gt', nargs='?', dest='graph_type', default="bar",
                         help='[bar|line|scatter]: default is bar')
     parser.add_argument(
@@ -163,6 +191,8 @@ if __name__ == '__main__':
         num_args = len((sys.argv)) - 1
         main(
             num_args=num_args,
+            x=args.x,
+            y=args.y,
             input_file=args.input_file,
             output_filename=args.output_filename,
             output_format=args.output_format,
