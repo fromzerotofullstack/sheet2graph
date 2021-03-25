@@ -7,14 +7,32 @@ import plotly.express as px
 import pathlib
 import argparse
 from typeguard import typechecked
+from openpyxl.utils.cell import get_column_letter
+import numpy as np
 
 
 @typechecked
 def select_data(df: pd.DataFrame) -> pd.DataFrame:
     df.dropna(how='all', inplace=True)
-    df = df.iloc[2:].copy()
-    df.columns = ['Salesman', 'Week1', 'Week2', 'Week3', 'Week4']
-    df['Week1'] = df['Week1'].astype(int)
+
+    """
+    index like in excel
+    letters for columns
+    1 based integers for rows
+    """
+
+    # df = df.iloc[2:].copy()
+    # df.columns = ['Salesman', 'Week1', 'Week2', 'Week3', 'Week4']
+    # df['Week1'] = df['Week1'].astype(int)
+
+    columns = df.columns.to_list()
+    letter_columns = []
+    for el in columns:
+        letter_columns.append(get_column_letter(el + 1))
+
+    df.columns = letter_columns
+    df.index = np.arange(1, len(df) + 1)
+
     return df
 
 
@@ -32,9 +50,9 @@ def plot(df: pd.DataFrame, graph_type: str = 'bar') -> Any:
     return fig
 
 
-def main(num_args:int, input_file=None, output_filename=None, output_format='', output_folder='', output_size='700x500',
+def main(num_args: int, input_file=None, output_filename=None, output_format='', output_folder='',
+         output_size='700x500',
          graph_type='bar', print_version=False, version: str = '0.0', print_only=False):
-
     # no arguments prints version and help
     if num_args == 0 or print_version:
         print("mycommand {v}".format(v=version))
@@ -85,11 +103,11 @@ def main(num_args:int, input_file=None, output_filename=None, output_format='', 
                 print(e)
                 exit()
 
+    df = select_data(df)
     if print_only:
         print(df)
         return
 
-    df = select_data(df)
     fig = plot(df, graph_type=graph_type)
 
     plotly.io.write_image(fig, output_path, format=output_format, width=width, height=height)

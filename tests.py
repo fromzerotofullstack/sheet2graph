@@ -55,6 +55,7 @@ class TestCommandLine(unittest.TestCase):
     """
     Defaults
     """
+
     def test_default(self):
         out = self.run_cmd_with_output('')
         self.assertTrue(b'mycommand 0.1' in out)
@@ -64,6 +65,16 @@ class TestCommandLine(unittest.TestCase):
         out = self.run_cmd_with_output('--version')
         self.assertTrue(b'mycommand 0.1' in out)
         self.assertTrue(b'--help' in out)
+
+    def test_only_input(self):
+        cmd = '{input}'.format(
+            input=self.csv_file,
+        )
+        out = self.run_cmd_with_output(cmd)
+        files_created = os.listdir(self.folder_output)
+        no_files_created = files_created == []
+        self.assertTrue(no_files_created)
+        self.assertTrue(all(el in out for el in [b'A', b'B', b'C', b'D', b'1', b'2', b'3', b'4']))
 
     """
     Output
@@ -194,7 +205,6 @@ class TestCommandLine(unittest.TestCase):
         )
         self.run_cmd(cmd)
         self.assertTrue(isfile('{out}/output/tests/out.png'.format(out=self.folder_output)))
-
 
     def test_input_xlsx(self):
         cmd = '{input} --output-filename {out}/output/tests/out.png'.format(
