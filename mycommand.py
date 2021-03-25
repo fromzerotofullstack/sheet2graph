@@ -112,7 +112,17 @@ def select_data(df: pd.DataFrame, x=Optional[str], y=Optional[str]) -> pd.DataFr
             'x': x_vals,
             'y': y_vals,
         }
-        new_df = pd.DataFrame(data)
+        """
+        We try to convert to numeric
+        if it is not possible it will raise an exception
+        and we repeat without numeric conversion
+        """
+        try:
+            new_df = pd.DataFrame(data)
+            new_df['y'] = pd.to_numeric(new_df['y'])
+        except Exception as e:
+            new_df = pd.DataFrame(data)
+
         return new_df
 
     return df
