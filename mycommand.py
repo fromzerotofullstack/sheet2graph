@@ -1,5 +1,5 @@
 import sys
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 import pandas as pd
 import plotly
@@ -7,12 +7,59 @@ import plotly.express as px
 import pathlib
 import argparse
 from typeguard import typechecked
-from openpyxl.utils.cell import get_column_letter
+from openpyxl.utils.cell import get_column_letter, coordinate_from_string
 import numpy as np
 
 
 @typechecked
 def select_data(df: pd.DataFrame, x=Optional[str], y=Optional[str]) -> pd.DataFrame:
+    @typechecked
+    def get_vals_from_selector(sel: str = 'a3,a4,a5') -> List[str]:
+        vals = []
+
+        # case insensitive
+        sel = sel.upper()
+
+        # range values
+        if ':' in sel:
+            cells = sel.split(':')
+            # A3 to ('A', 3)
+            letter1, num1 = coordinate_from_string(cells[0])
+            letter2, num2 = coordinate_from_string(cells[1])
+
+            if len(cells) != 2:
+                print("Bad syntax in range selector")
+                exit()
+
+            if letter1 != letter2:
+                print("Only ranges with the same letter are supported")
+                exit()
+
+            # we do not want an infinite loop if syntax is wrong
+            max_count = 10000
+            tmp = ''
+            c = num1
+            while c <= num2 and c < max_count:
+                tmp += letter1 + str(c) + ','
+                c += 1
+
+            if tmp.endswith(','):
+                tmp = tmp[:-1]
+            sel = tmp
+
+        # comma-separated values
+        if ',' in sel:
+            cells = sel.split(',')
+            for el in cells:
+                # A3 to ('A', 3)
+                letter, num = coordinate_from_string(el)
+                cell_val = df[letter].iloc[num - 1]
+                # xlsx can be number instead of string
+                vals.append(str(cell_val))
+
+
+        return vals
+
     df.dropna(how='all', inplace=True)
 
     if (x and not y) or (y and not x):
@@ -56,17 +103,30 @@ def select_data(df: pd.DataFrame, x=Optional[str], y=Optional[str]) -> pd.DataFr
     df.columns = letter_columns
     df.index = np.arange(1, len(df) + 1)
 
+    """
+    select our data for x and y
+    """
+    if x and y:
+        x_vals = get_vals_from_selector(x)
+        y_vals = get_vals_from_selector(y)
+        data = {
+            'x': x_vals,
+            'y': y_vals,
+        }
+        new_df = pd.DataFrame(data)
+        return new_df
+
     return df
 
 
 @typechecked
 def plot(df: pd.DataFrame, graph_type: str = 'bar') -> Any:
     if graph_type == 'bar':
-        fig = px.bar(df, x='Salesman', y='Week1')
+        fig = px.bar(df, x='x', y='y')
     elif graph_type == 'line':
-        fig = px.line(df, x='Salesman', y='Week1')
+        fig = px.line(df, x='x', y='y')
     elif graph_type == 'scatter':
-        fig = px.scatter(df, x='Salesman', y='Week1')
+        fig = px.scatter(df, x='x', y='y')
     else:
         print("graph type not supported")
         exit()
