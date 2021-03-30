@@ -220,7 +220,7 @@ def main(num_args: int, x=None, y=None, xlabel='x', ylabel='y', input_file=None,
     plotly.io.write_image(fig, output_path, format=output_format, width=width, height=height)
 
 
-if __name__ == '__main__':
+def entry():
     parser = argparse.ArgumentParser(description="""
     Graph spreadsheet data easily
     Takes a spreadsheet file as input and outputs an image file (bitmap, vector) with graphs of the data contained in the file.
@@ -294,3 +294,7 @@ if __name__ == '__main__':
             print_only=args.print_only,
             version='0.1',
         )
+
+
+if __name__ == '__main__':
+    entry()
