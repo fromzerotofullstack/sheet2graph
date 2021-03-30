@@ -1,5 +1,6 @@
 .idea
 env3.8
+test_env3.8
 output
 *.png
 *.jpg

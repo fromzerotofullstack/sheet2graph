@@ -27,5 +27,15 @@ package_upload:
 	env3.8/bin/python3.8 -m twine upload --repository testpypi dist/*
 
 
+package_install:
+	rm -rf ./test_env3
+	python3.8 -m venv test_env3.8
+	./test_env3.8/bin/python3.8 -m pip install --upgrade pip
+	./test_env3.8/bin/python3.8 -m pip install --no-deps -i https://test.pypi.org/simple/ sheet2graph==0.1.59
+
+package_uninstall:
+	./test_env3.8/bin/python3.8 -m pip uninstall sheet2graph
+
+
 freeze_requirements:
 	./env3.8/bin/pip freeze > requirements.txt
