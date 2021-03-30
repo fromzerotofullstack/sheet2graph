@@ -34,7 +34,7 @@ class TestCommandLine(unittest.TestCase):
         """
         helper to run our command
         """
-        cmd = 'env3.8/bin/python3.8 mycommand.py {params}'.format(params=params)
+        cmd = 'env3.8/bin/python3.8 sheet2graph.py {params}'.format(params=params)
         os.system(cmd)
 
     @staticmethod
@@ -42,7 +42,7 @@ class TestCommandLine(unittest.TestCase):
         """
         helper to run our command
         """
-        cmd = 'env3.8/bin/python3.8 mycommand.py {params}'.format(params=params)
+        cmd = 'env3.8/bin/python3.8 sheet2graph.py {params}'.format(params=params)
         output = subprocess.check_output(cmd, shell=True)
         return output
 
