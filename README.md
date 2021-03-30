@@ -37,7 +37,7 @@ sheet2graph sales_data.xlsx -x "a3:a6" -y "b3:b6" --print-only
 sheet2graph sales_data.xlsx -x "a3:a6" -y "b3:b6" --output-filename output/tests/out.png -xlabel "Salesmen" -ylabel "Sales Week 1"
 ```
 
-![Example output graph](./example_output1.png)
+![Example output graph](https://raw.githubusercontent.com/fromzerotofullstack/sheet2graph/master/example_output1.png)
 
 ## Usage
 
