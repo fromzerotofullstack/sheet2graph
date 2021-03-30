@@ -24,14 +24,16 @@ package:
 
 package_upload:
 	env3.8/bin/python3.8 -m pip install --upgrade twine
-	env3.8/bin/python3.8 -m twine upload --repository testpypi dist/*
+	#env3.8/bin/python3.8 -m twine upload --repository testpypi dist/*
+	env3.8/bin/python3.8 -m twine upload dist/*
 
 
 package_install:
 	rm -rf ./test_env3
 	python3.8 -m venv test_env3.8
 	./test_env3.8/bin/python3.8 -m pip install --upgrade pip
-	./test_env3.8/bin/python3.8 -m pip install --no-deps -i https://test.pypi.org/simple/ sheet2graph==0.1.59
+	#./test_env3.8/bin/python3.8 -m pip install --no-deps -i https://test.pypi.org/simple/ sheet2graph==0.1.59
+	./test_env3.8/bin/python3.8 -m pip install sheet2graph
 
 package_uninstall:
 	./test_env3.8/bin/python3.8 -m pip uninstall sheet2graph
