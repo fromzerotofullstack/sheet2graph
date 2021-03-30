@@ -16,5 +16,16 @@ run:
 	#env3.8/bin/python3.8 ./src/sheet2graph/sheet2graph.py ./test_data/sales_data.xlsx -x "a3:a6" -y "b3:b6" --output-filename output/tests/out.png -xlabel "Salesmen" -ylabel "Sales Week 1"
 
 
+package:
+	rm -rf ./dist
+	rm -rf ./build
+	env3.8/bin/python3.8 -m pip install --upgrade build
+	env3.8/bin/python3.8 -m build
+
+package_upload:
+	env3.8/bin/python3.8 -m pip install --upgrade twine
+	env3.8/bin/python3.8 -m twine upload --repository testpypi dist/*
+
+
 freeze_requirements:
 	./env3.8/bin/pip freeze > requirements.txt

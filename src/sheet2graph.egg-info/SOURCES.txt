@@ -1,0 +1,14 @@
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+src/sheet2graph/__init__.py
+src/sheet2graph/__main__.py
+src/sheet2graph/sheet2graph.py
+src/sheet2graph/tests.py
+src/sheet2graph.egg-info/PKG-INFO
+src/sheet2graph.egg-info/SOURCES.txt
+src/sheet2graph.egg-info/dependency_links.txt
+src/sheet2graph.egg-info/entry_points.txt
+src/sheet2graph.egg-info/requires.txt
+src/sheet2graph.egg-info/top_level.txt

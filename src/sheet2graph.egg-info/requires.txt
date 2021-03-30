@@ -1,0 +1,8 @@
+kaleido
+numpy
+openpyxl
+pandas
+Pillow
+plotly
+requests
+typeguard

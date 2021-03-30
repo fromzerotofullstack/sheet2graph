@@ -1,0 +1,3 @@
+[console_scripts]
+sheet2graph = sheet2graph.sheet2graph:entry
+

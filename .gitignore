@@ -11,4 +11,6 @@ output
 *.odf
 *.odt
 __pycache__
+build
+dist
 

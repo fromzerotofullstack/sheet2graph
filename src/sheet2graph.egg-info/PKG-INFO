@@ -1,0 +1,94 @@
+Metadata-Version: 2.1
+Name: sheet2graph
+Version: 0.1.57
+Summary: Generate graphs from spreadsheets
+Home-page: https://github.com/fromzerotofullstack/sheet2graph
+Author: Jesus Mejuto
+Author-email: j@mejuto.co
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/fromzerotofullstack/sheet2graph/issues
+Description: # sheet2graph
+        
+        sheet2graph is a command developed as part of the [Full-stack command commandline course at fromzerotofulsstack](https://fromzerotofullstack.com/courses/sheet2graph/)
+        
+        ## Examples
+        ### Printing the spreadsheet contents
+        ```bash
+        sheet2graph sales_data.csv --print-only
+        ```
+        
+        ```bash
+                                                    A      B      C      D      E
+        1  Sales per week (Firm: Glengarry Glen Ross)    NaN    NaN    NaN    NaN
+        2                                    Salesman  Week1  Week2  Week3  Week4
+        3                                  Ricky Roma     20     15     17     11
+        4                                     Shelley      1      2      0      1
+        5                              George Aaronow      6      5      2      4
+        6                                   Dave Moss      8      7      8      7
+        ```
+        
+        ### Selecting data
+        ```bash
+        sheet2graph sales_data.xlsx -x "a3:a6" -y "b3:b6" --print-only
+        ```
+        
+        ```bash
+                        x   y
+        0      Ricky Roma  20
+        1         Shelley   1
+        2  George Aaronow   6
+        3       Dave Moss   8
+        ```
+        
+        ### Example output graph
+        
+        ```bash
+        sheet2graph sales_data.xlsx -x "a3:a6" -y "b3:b6" --output-filename output/tests/out.png -xlabel "Salesmen" -ylabel "Sales Week 1"
+        ```
+        
+        ![Example output graph](./example_output1.png)
+        
+        ## Usage
+        
+        ```
+        usage: sheet2graph [-h] [-x [X]] [-y [Y]] [-xlabel [XLABEL]] [-ylabel [YLABEL]] [--graph-type [GRAPH_TYPE]] [--output-folder [OUTPUT_FOLDER]] [--output-filename [OUTPUT_FILENAME]]
+                              [--output-format [OUTPUT_FORMAT]] [--size [SIZE]] [--print-only [PRINT_ONLY]] [--run-tests [RUN_TESTS]] [--version [PRINT_VERSION]]
+                              [input_file]
+        
+        Graph spreadsheet data easily Takes a spreadsheet file as input and outputs an image file (bitmap, vector) with graphs of the data contained in the file. Accepted input files are csv and
+        xlsx file extensions
+        
+        positional arguments:
+          input_file            input file (csv, xlsx)
+        
+        optional arguments:
+          -h, --help            show this help message and exit
+          -x [X]                An expression to select the x axis. Ex. '-x A2:A6' or '-x a2,a3,a4,a5'. The range works like in a spreadsheeet, with columns being letters, and row numbers starting
+                                at 1. Case-insensitive
+          -y [Y]                An expression to select the y axis. Ex. '-x b2:b6' or '-x B2,B3,B4,B5'. The range works like in a spreadsheeet, with columns being letters, and row numbers starting
+                                at 1. Case-insensitive
+          -xlabel [XLABEL]      The label for the x axis. By default 'x'
+          -ylabel [YLABEL]      The label for the y axis. By default 'y'
+          --graph-type [GRAPH_TYPE], -gt [GRAPH_TYPE]
+                                [bar|line|scatter]: default is bar
+          --output-folder [OUTPUT_FOLDER], -of [OUTPUT_FOLDER]
+                                output_folder (ending without slash): default is 'output'. Can be serveral folders. ex. 'sales/graphs'
+          --output-filename [OUTPUT_FILENAME], -ofi [OUTPUT_FILENAME]
+                                output_filename: default is 'output/output.png'. Overrides --output-folder,--output-format if present
+          --output-format [OUTPUT_FORMAT], -ofo [OUTPUT_FORMAT]
+                                [png|jpg|svg]: default is png
+          --size [SIZE], -s [SIZE]
+                                size: widthxheight. Default '700x500'
+          --print-only [PRINT_ONLY], -p [PRINT_ONLY]
+                                Prints the selected data, without generating any file output
+          --run-tests [RUN_TESTS]
+                                Runs all the tests (might take a while). Overloads any other option
+          --version [PRINT_VERSION], -v [PRINT_VERSION]
+                                Show version information
+        ```
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
